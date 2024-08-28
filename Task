@@ -1,0 +1,119 @@
+import Head from 'next/head';
+import axios from 'axios';
+import Link from 'next/link';
+import { useState, useEffect } from 'react';
+
+function HomePage() {
+  const [products, setProducts] = useState([]);
+  const [loading, setLoading] = useState(true);
+
+  useEffect(() => {
+    axios.get('https://fakestoreapi.com/products')
+      .then(response => {
+        setProducts(response.data);
+        setLoading(false);
+      })
+      .catch(error => {
+        console.error(error);
+        setLoading(false);
+      });
+  }, []);
+
+  if (loading) {
+    return <div>Loading...</div>;
+  }
+
+  return (
+    <div>
+      <Head>
+        <title>Appscrip Task</title>
+        <meta name="description" content="Appscrip task page" />
+        <meta property="og:title" content="Appscrip Task" />
+        <meta property="og:description" content="Appscrip task page" />
+        <meta property="og:image" content="https://example.com/image.jpg" />
+        <style>
+          {`
+            body {
+              font-family: Arial, sans-serif;
+              margin: 0;
+              padding: 0;
+            }
+
+            header {
+              background-color: #333;
+              color: #fff;
+              padding: 1rem;
+              text-align: center;
+            }
+
+            main {
+              display: flex;
+              flex-direction: column;
+              align-items: center;
+              padding: 2rem;
+            }
+
+            footer {
+              background-color: #333;
+              color: #fff;
+              padding: 1rem;
+              text-align: center;
+            }
+
+            @media (max-width: 768px) {
+              main {
+                flex-direction: column;
+              }
+            }
+
+            @media (max-width: 480px) {
+              header {
+                padding: 0.5rem;
+              }
+            }
+          `}
+        </style>
+      </Head>
+      <header>
+        <nav>
+          <ul>
+            <li>
+              <Link href="/">
+                <a>Home</a>
+              </Link>
+            </li>
+            <li>
+              <Link href="/about">
+                <a>About</a>
+              </Link>
+            </li>
+          </ul>
+        </nav>
+      </header>
+      <main>
+        <h1>Products</h1>
+        <ul>
+          {products.map(product => (
+            <li key={product.id}>
+              <img src={product.image} alt={product.title} />
+              <h2>{product.title}</h2>
+              <p>{product.description}</p>
+            </li>
+          ))}
+        </ul>
+      </main>
+      <footer>
+        <p>&copy; 2023 Appscrip Task</p>
+      </footer>
+    </div>
+  );
+}
+
+export const getServerSideProps = async () => {
+  // Pre-render the page on the server
+  return {
+    props: {},
+  };
+};
+
+export default HomePage;
